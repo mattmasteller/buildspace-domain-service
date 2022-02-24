@@ -49,6 +49,45 @@ const main = async () => {
     'Balance of owner after withdrawal:',
     hre.ethers.utils.formatEther(ownerBalance)
   )
+
+  // Get names
+  const names = await domainContract.getAllNames()
+  console.log('getAllNames', names)
+
+  // Try to set name when authorized
+  txn = await domainContract.connect(owner).setRecord('a16z', 'foo')
+  txn.wait()
+
+  const record = await domainContract.connect(owner).getRecord('a16z')
+  console.log('record for a16z:', record)
+
+  // Try to set name when unauthorized
+  try {
+    txn = await domainContract.connect(superCoder).setRecord('a16z', 'bar')
+    txn.await()
+  } catch (error) {
+    console.log(error.message)
+  }
+
+  // Try registering a taken name
+  try {
+    let txn = await domainContract.register('a16z', {
+      value: hre.ethers.utils.parseEther('1234'),
+    })
+    await txn.wait()
+  } catch (error) {
+    console.log(error.message)
+  }
+
+  // Try registering a long name
+  try {
+    let txn = await domainContract.register('thisisareallylongname', {
+      value: hre.ethers.utils.parseEther('1234'),
+    })
+    await txn.wait()
+  } catch (error) {
+    console.log(error.message)
+  }
 }
 
 const runMain = async () => {

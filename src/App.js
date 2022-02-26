@@ -3,9 +3,11 @@ import './styles/App.css'
 import twitterLogo from './assets/twitter-logo.svg'
 import { ethers } from 'ethers'
 
-import { checkIfWalletIsConnected, connectWallet } from './utils/web3'
-
+import { checkIfWalletIsConnected, connectWallet, switchNetwork } from './utils/web3'
 import domainContract from './utils/contract.json'
+
+import polygonLogo from './assets/polygonlogo.png'
+import ethLogo from './assets/ethlogo.png'
 
 // Constants
 const TWITTER_HANDLE = '_buildspace'
@@ -16,6 +18,7 @@ const tld = '.guitar'
 
 const App = () => {
   // State variable we use to store our user's public wallet.
+  const [network, setNetwork] = useState('')
   const [currentAccount, setCurrentAccount] = useState('')
   const [domain, setDomain] = useState('')
   const [record, setRecord] = useState('')
@@ -80,7 +83,7 @@ const App = () => {
 
   // This runs our function when the page loads.
   useEffect(() => {
-    checkIfWalletIsConnected(setCurrentAccount)
+    checkIfWalletIsConnected(setCurrentAccount, setNetwork)
   }, [])
 
   const RenderNotConnectedContainer = () => (
@@ -90,7 +93,7 @@ const App = () => {
         alt="Guitar gif"
       />
       <button
-        onClick={() => connectWallet(setCurrentAccount)}
+        onClick={() => connectWallet(setCurrentAccount, setNetwork)}
         className="cta-button connect-wallet-button"
       >
         Connect Wallet
@@ -100,6 +103,18 @@ const App = () => {
 
   // Form to enter domain name and data
   const renderInputForm = () => {
+    if (network !== 'Polygon Mumbai Testnet') {
+      return (
+        <div className="connect-wallet-container">
+          <h2>Please switch to Polygon Mumbai Testnet</h2>
+          {/* This button will call our switch network function */}
+          <button className="cta-button mint-button" onClick={switchNetwork}>
+            Click here to switch
+          </button>
+        </div>
+      )
+    }
+
     return (
       <div className="form-container">
         <div className="first-row">
@@ -149,6 +164,23 @@ const App = () => {
               <p className="subtitle">
                 Your favorite guitar on the blockchain!
               </p>
+            </div>
+            {/* Display a logo and wallet connection status */}
+            <div className="right">
+              <img
+                alt="Network logo"
+                className="logo"
+                src={network.includes('Polygon') ? polygonLogo : ethLogo}
+              />
+              {currentAccount ? (
+                <p>
+                  {' '}
+                  Wallet: {currentAccount.slice(0, 6)}...
+                  {currentAccount.slice(-4)}{' '}
+                </p>
+              ) : (
+                <p> Not connected </p>
+              )}
             </div>
           </header>
         </div>

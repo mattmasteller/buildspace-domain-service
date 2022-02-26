@@ -1,4 +1,9 @@
+import { ethers } from 'ethers'
+
 import { networks } from './networks'
+import domainContract from './contract.json'
+
+const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS
 
 const handleChainChanged = () => window.location.reload()
 
@@ -94,4 +99,18 @@ export const switchNetwork = async () => {
       'MetaMask is not installed. Please install it to use this app: https://metamask.io/download.html'
     )
   }
+}
+
+export const getContract = async () => {
+  let contract = undefined
+
+  const { ethereum } = window
+
+  if (ethereum) {
+    const provider = new ethers.providers.Web3Provider(ethereum)
+    const signer = provider.getSigner()
+    contract = new ethers.Contract(CONTRACT_ADDRESS, domainContract.abi, signer)
+  }
+
+  return contract
 }

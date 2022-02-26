@@ -53,7 +53,8 @@ header{
 
 .right{
   display: flex;
-  background: black;
+  background: rgb(0, 0, 0);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(91, 91, 91, 0.5900735294117647) 33%, rgba(148, 143, 144, 1) 100%);
   border-radius: 16px;
   padding: 12px 20px;
   height: 99%;
